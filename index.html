@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>RuangHadir — Absensi Sekolah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#" aria-label="RuangHadir, beranda">
+        <span class="brand-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 8.5 16 3l11 5.5v14L16 29 5 22.5z"/><path d="m11 16 3.2 3.2L21.5 12"/></svg></span>
+        <span class="brand-copy"><strong>ruang<span>hadir</span></strong><small>SEKOLAH DASAR</small></span>
+      </a>
+      <div class="side-label">MENU UTAMA</div>
+      <nav class="main-nav" aria-label="Menu utama">
+        <button class="nav-link active" data-page="dashboard"><span class="nav-icon">◫</span>Dashboard</button>
+        <button class="nav-link" data-page="attendance"><span class="nav-icon">◷</span>Absensi <span class="nav-count" id="nav-count">0</span></button>
+        <button class="nav-link" data-page="students"><span class="nav-icon">♧</span>Data Siswa</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card"><span class="help-spark">✳</span><strong>Butuh bantuan?</strong><p>Kelola kehadiran siswa jadi lebih mudah setiap hari.</p><button id="help-button">Pelajari cara kerja <span>↗</span></button></div>
+        <div class="profile">
+          <div class="avatar">SA</div><div class="profile-info"><strong>Admin Sekolah</strong><small>Administrator</small></div><button class="more-button" aria-label="Opsi profil">···</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobile-menu" aria-label="Buka menu">☰</button>
+        <div class="breadcrumb">Sekolah <span>/</span> <strong id="breadcrumb-current">Dashboard</strong></div>
+        <div class="topbar-right">
+          <span class="today-chip"><span class="live-dot"></span> Tahun Ajaran <span id="academic-year"></span></span>
+          <button class="icon-button notification-button" aria-label="Notifikasi">♧<i></i></button>
+          <div class="avatar top-avatar">SA</div>
+        </div>
+      </header>
+
+      <section class="page active" id="page-dashboard">
+        <div class="welcome-row">
+          <div><p class="eyebrow" id="welcome-date">HARI INI</p><h1 id="welcome-title">Selamat pagi, Admin <span class="wave">✦</span></h1><p class="subheading">Pantau kehadiran siswa dengan mudah hari ini.</p></div>
+          <button class="button button-primary" id="open-scanner"><span class="button-qr">▦</span> Scan QR Siswa</button>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>Total Siswa</span><span class="stat-icon icon-lilac">♧</span></div><div class="stat-value" id="stat-total">0</div><div class="stat-foot"><span class="trend">↗</span> Terdaftar di sekolah</div><div class="stat-orb lilac-orb"></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Hadir Hari Ini</span><span class="stat-icon icon-mint">✓</span></div><div class="stat-value" id="stat-present">0</div><div class="stat-foot"><span class="trend">↗</span> <span id="present-percent">0%</span> dari total siswa</div><div class="stat-orb mint-orb"></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Terlambat</span><span class="stat-icon icon-amber">◷</span></div><div class="stat-value" id="stat-late">0</div><div class="stat-foot"><span class="neutral">●</span> Perlu perhatian</div><div class="stat-orb amber-orb"></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Belum Hadir</span><span class="stat-icon icon-rose">⌁</span></div><div class="stat-value" id="stat-absent">0</div><div class="stat-foot"><span class="neutral">●</span> Menunggu kehadiran</div><div class="stat-orb rose-orb"></div></article>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel attendance-panel">
+            <div class="panel-heading"><div><h2>Absensi Hari Ini</h2><p>Aktivitas kehadiran siswa secara langsung</p></div><button class="text-button" data-go="attendance">Lihat semua <span>→</span></button></div>
+            <div class="table-wrap"><table><thead><tr><th>NAMA SISWA</th><th>KELAS</th><th>WAKTU</th><th>STATUS</th></tr></thead><tbody id="dashboard-attendance"></tbody></table><div class="empty-state hidden" id="dashboard-empty"><span>▦</span><strong>Belum ada absensi hari ini</strong><p>Pindai QR siswa untuk mencatat kehadiran.</p></div></div>
+          </section>
+          <section class="panel quick-panel">
+            <div class="panel-heading"><div><h2>Akses Cepat</h2><p>Yang sering kamu butuhkan</p></div></div>
+            <button class="quick-action" id="quick-scan"><span class="quick-icon scan-icon">▦</span><span><strong>Scan QR Siswa</strong><small>Catat kehadiran dengan cepat</small></span><b>→</b></button>
+            <button class="quick-action" id="quick-students"><span class="quick-icon student-icon">♧</span><span><strong>Kelola Data Siswa</strong><small>Tambah atau lihat daftar siswa</small></span><b>→</b></button>
+            <div class="tip-card"><span>✦</span><div><strong>Tips hari ini</strong><p>Pemindaian QR sebelum pukul 07.15 akan tercatat sebagai hadir tepat waktu.</p></div></div>
+          </section>
+        </div>
+        <footer class="footer">© <span class="copyright-year"></span> RuangHadir <span>•</span> Dibuat untuk sekolah yang lebih tertib.</footer>
+      </section>
+
+      <section class="page" id="page-attendance">
+        <div class="welcome-row page-title-row"><div><p class="eyebrow">CATATAN KEHADIRAN</p><h1>Absensi Siswa</h1><p class="subheading">Lihat dan kelola kehadiran siswa berdasarkan tanggal.</p></div><button class="button button-primary" id="attendance-scan"><span class="button-qr">▦</span> Scan QR Siswa</button></div>
+        <section class="panel full-panel">
+          <div class="panel-heading attendance-tools"><div><h2>Riwayat Absensi</h2><p id="attendance-date-label">Catatan kehadiran hari ini</p></div><div class="toolbar"><input id="attendance-search" class="search-input" type="search" placeholder="Cari nama siswa..." aria-label="Cari absensi"><input id="attendance-date" class="date-input" type="date" aria-label="Pilih tanggal"><button class="button button-outline" id="export-csv">↓ <span>Ekspor CSV</span></button></div></div>
+          <div class="table-wrap"><table><thead><tr><th>NAMA SISWA</th><th>NIS</th><th>KELAS</th><th>TANGGAL</th><th>WAKTU</th><th>STATUS</th></tr></thead><tbody id="attendance-body"></tbody></table><div class="empty-state hidden" id="attendance-empty"><span>◷</span><strong>Tidak ada catatan absensi</strong><p>Coba ubah tanggal atau kata kunci pencarian.</p></div></div>
+        </section>
+        <footer class="footer">© <span class="copyright-year"></span> RuangHadir <span>•</span> Dibuat untuk sekolah yang lebih tertib.</footer>
+      </section>
+
+      <section class="page" id="page-students">
+        <div class="welcome-row page-title-row"><div><p class="eyebrow">DATA SEKOLAH</p><h1>Data Siswa</h1><p class="subheading">Kelola siswa dan QR code untuk absensi.</p></div><button class="button button-primary" id="add-student"><span class="plus">＋</span> Tambah Siswa</button></div>
+        <section class="panel full-panel">
+          <div class="panel-heading student-tools"><div><h2>Daftar Siswa <span class="count-pill" id="student-count">0 siswa</span></h2><p>QR code siswa bisa dipindai untuk mencatat kehadiran.</p></div><div class="toolbar"><input id="student-search" class="search-input" type="search" placeholder="Cari nama atau NIS..." aria-label="Cari siswa"><select id="class-filter" class="select-input" aria-label="Filter kelas"><option value="">Semua Kelas</option></select></div></div>
+          <div class="table-wrap"><table><thead><tr><th>NAMA SISWA</th><th>NIS</th><th>KELAS</th><th>QR CODE</th><th></th></tr></thead><tbody id="students-body"></tbody></table><div class="empty-state hidden" id="students-empty"><span>♧</span><strong>Siswa tidak ditemukan</strong><p>Coba kata kunci lain atau tambahkan siswa baru.</p></div></div>
+        </section>
+        <footer class="footer">© <span class="copyright-year"></span> RuangHadir <span>•</span> Dibuat untuk sekolah yang lebih tertib.</footer>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="scanner-modal" role="dialog" aria-modal="true" aria-labelledby="scanner-title">
+    <div class="modal scanner-modal"><button class="close-button" data-close="scanner-modal" aria-label="Tutup">×</button><div class="modal-kicker">ABSENSI QR</div><h2 id="scanner-title">Pindai QR Siswa</h2><p class="modal-description">Arahkan kamera ke QR code siswa untuk mencatat kehadiran.</p><div id="qr-reader"></div><div class="scanner-feedback" id="scanner-feedback">Kamera siap dipindai. Izinkan akses kamera jika diminta.</div><div class="divider"><span>atau masukkan NIS</span></div><form id="manual-attendance" class="manual-form"><input id="manual-nis" autocomplete="off" placeholder="Contoh: 2025001" aria-label="Masukkan NIS siswa"><button class="button button-primary" type="submit">Catat Hadir</button></form></div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="student-modal" role="dialog" aria-modal="true" aria-labelledby="student-modal-title">
+    <div class="modal student-modal"><button class="close-button" data-close="student-modal" aria-label="Tutup">×</button><div class="modal-kicker">DATA SISWA</div><h2 id="student-modal-title">Tambah Siswa</h2><p class="modal-description">Lengkapi data siswa. QR code dibuat otomatis.</p>
+      <form id="student-form"><label>Nama lengkap<input id="student-name" required maxlength="70" placeholder="Nama siswa"></label><label>Nomor induk siswa (NIS)<input id="student-nis" required maxlength="20" placeholder="Contoh: 2025010"></label><label>Kelas<select id="student-class" required><option value="">Pilih kelas</option><option>1A</option><option>1B</option><option>2A</option><option>2B</option><option>3A</option><option>3B</option><option>4A</option><option>4B</option><option>5A</option><option>5B</option><option>6A</option><option>6B</option></select></label><div class="form-actions"><button type="button" class="button button-outline" data-close="student-modal">Batal</button><button type="submit" class="button button-primary">Simpan Siswa</button></div></form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qr-title">
+    <div class="modal qr-modal"><button class="close-button" data-close="qr-modal" aria-label="Tutup">×</button><div class="modal-kicker">QR SISWA</div><h2 id="qr-title">QR Code Siswa</h2><p class="modal-description" id="qr-student-info"></p><div class="qr-display" id="qr-display"></div><p class="qr-caption">Simpan atau cetak QR ini untuk keperluan absensi.</p><button class="button button-primary" id="print-qr">Cetak QR Code</button></div>
+  </div>
+  <div class="toast-region" id="toast-region" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
